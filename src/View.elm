@@ -1,6 +1,7 @@
 module View exposing (view)
 import Model exposing (Model, Msg(..), Message(..))
 import Html exposing (Html, div, h1, text, input, button)
+import Html.Attributes exposing (defaultValue, style)
 import Html.Events exposing (onInput, onClick)
 import Time
 import Date
@@ -15,7 +16,7 @@ view model =
       ]
     , text <| "Url: " ++ model.url
     , messages model.messages
-    , input [ onInput Input ] []
+    , input [ onInput Input, defaultValue model.input ] []
     , button [ onClick (Timestamp SendRequest) ] [ text "Send" ]
     ]
 

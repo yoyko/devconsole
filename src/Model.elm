@@ -17,11 +17,10 @@ type Message
 initialModel : Model
 initialModel =
   { url = "ws://nuvo.local:8000/apiWs"
-  , input = ""
+  , input = """{"method":"ping"}"""
   , messages = []
   , lastTs = 0
   }
-
 
 type Msg
   = Input String
