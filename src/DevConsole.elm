@@ -17,9 +17,12 @@ init : ( Model, Cmd Msg )
 init =
   ( Model.initialModel, Cmd.none )
 
+timestamped m v =
+  Timestamp (m v)
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  WebSocket.listen model.url Response
+  WebSocket.listen model.url (timestamped Response)
 
 
 
