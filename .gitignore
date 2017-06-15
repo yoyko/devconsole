@@ -2,6 +2,8 @@
 elm-stuff
 # elm-repl generated files
 repl-temp-*
+# elm-reactor's generated files
+/elm.js
 
 # build output
 /build/
