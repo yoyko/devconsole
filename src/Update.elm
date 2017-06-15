@@ -1,28 +1,15 @@
 module Update exposing (update)
-import Model exposing (Model, Msg(..), Message(..))
-import WebSocket
-import Time
-import Task
+import Model exposing (Model, Msg(..))
+import Connection
 
-addMessage : Model -> Message -> Model
-addMessage model msg =
-  { model | messages = model.messages ++ [ msg ] }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  let
-    onlyAddMessage msg = ( addMessage model msg, Cmd.none )
-  in
-    case msg of
-      Input newInput -> ( { model | input = newInput }, Cmd.none )
-      SendRequest ->
-        ( addMessage model <| Sent model.lastTs model.input
-        , WebSocket.send model.url model.input
-        )
-      Response message -> onlyAddMessage <| Received model.lastTs message
-      WsOpened ws -> onlyAddMessage <| Opened model.lastTs ws
-      WsClosed ws -> onlyAddMessage <| Closed model.lastTs ws
-      Timestamp msg_ -> (model, Task.perform (Timestamped msg_) Time.now)
-      Timestamped msg_ ts -> update msg_ { model | lastTs = ts }
+  case msg of
+    Input newInput -> ( { model | input = newInput }, Cmd.none )
+    SendRequest ->
+      Model.applyConnection model <| Connection.send Conn model.connection model.input
+    Conn msg_ ->
+      Model.applyConnection model <| Connection.update Conn msg_ model.connection
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

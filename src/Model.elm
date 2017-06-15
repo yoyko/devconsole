@@ -1,34 +1,28 @@
-module Model exposing (Model, Message(..), Msg(..), initialModel)
-import Time
+module Model exposing (Model,  Msg(..), initialModel, applyConnection)
+import Connection
 
 type alias Model =
-  { url : String
+  { connection : Connection.Model
   , input : String
-  , messages : List Message
-  , lastTs : Time.Time
   }
 
-type Message
-  = Sent Time.Time String
-  | Received Time.Time String
-  | Opened Time.Time String
-  | Closed Time.Time String
+apply : (m -> Model) -> (m, Cmd msg) -> (Model, Cmd msg)
+apply setter =
+  Tuple.mapFirst setter
+
+applyConnection : Model -> (Connection.Model, Cmd msg) -> (Model, Cmd msg)
+applyConnection model =
+  apply (\m -> { model | connection = m})
 
 initialModel : Model
 initialModel =
-  { url = "ws://nuvo.local:8000/apiWs"
+  { connection = Connection.model "main"
   , input = """{"method":"ping"}"""
-  , messages = []
-  , lastTs = 0
   }
 
 type Msg
   = Input String
   | SendRequest
-  | Response String
-  | WsClosed String
-  | WsOpened String
-  | Timestamp Msg
-  | Timestamped Msg Time.Time
+  | Conn Connection.Msg
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

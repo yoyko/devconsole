@@ -1,5 +1,6 @@
 module View exposing (view)
-import Model exposing (Model, Msg(..), Message(..))
+import Model exposing (Model, Msg(..))
+import Connection exposing (Message(..))
 import Html exposing (Html, div, h1, text, input, button)
 import Html.Attributes exposing (defaultValue, style)
 import Html.Events exposing (onInput, onClick)
@@ -14,10 +15,10 @@ view model =
     [ h1 []
       [ text "DevConsole"
       ]
-    , text <| "Url: " ++ model.url
-    , messages model.messages
+    , text <| "Url: " ++ model.connection.url
+    , messages model.connection.messages
     , input [ onInput Input, defaultValue model.input ] []
-    , button [ onClick (Timestamp SendRequest) ] [ text "Send" ]
+    , button [ onClick SendRequest ] [ text "Send" ]
     ]
 
 messages : List Message -> Html Msg

@@ -1,10 +1,11 @@
 module DevConsole exposing (..)
 import Html exposing (h1, text)
 import Model exposing (Model, Msg(..))
+import Connection
 import Update
 import View
-import WebSocket
 
+main : Program Never Model Msg
 main =
   Html.program
     { init = init
@@ -17,17 +18,8 @@ init : ( Model, Cmd Msg )
 init =
   ( Model.initialModel, Cmd.none )
 
-timestamped m v =
-  Timestamp (m v)
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.batch
-    [ WebSocket.listen model.url (timestamped Response)
-    , WebSocket.onOpen (timestamped WsOpened)
-    , WebSocket.onClose (timestamped WsClosed)
-    ]
-
-
+  Connection.subscriptions Conn model.connection
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
