@@ -22,7 +22,11 @@ timestamped m v =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  WebSocket.listen model.url (timestamped Response)
+  Sub.batch
+    [ WebSocket.listen model.url (timestamped Response)
+    , WebSocket.onOpen (timestamped WsOpened)
+    , WebSocket.onClose (timestamped WsClosed)
+    ]
 
 
 

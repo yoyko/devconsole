@@ -11,6 +11,8 @@ type alias Model =
 type Message
   = Sent Time.Time String
   | Received Time.Time String
+  | Opened Time.Time String
+  | Closed Time.Time String
 
 initialModel : Model
 initialModel =
@@ -25,6 +27,8 @@ type Msg
   = Input String
   | SendRequest
   | Response String
+  | WsClosed String
+  | WsOpened String
   | Timestamp Msg
   | Timestamped Msg Time.Time
 

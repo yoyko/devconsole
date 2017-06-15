@@ -20,6 +20,8 @@ update msg model =
         , WebSocket.send model.url model.input
         )
       Response message -> onlyAddMessage <| Received model.lastTs message
+      WsOpened ws -> onlyAddMessage <| Opened model.lastTs ws
+      WsClosed ws -> onlyAddMessage <| Closed model.lastTs ws
       Timestamp msg_ -> (model, Task.perform (Timestamped msg_) Time.now)
       Timestamped msg_ ts -> update msg_ { model | lastTs = ts }
 

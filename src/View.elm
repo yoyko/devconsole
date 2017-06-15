@@ -37,6 +37,8 @@ message msg =
       case msg of
         Sent     ts m -> { color = "#ddf", text = (formatTs ts) ++ ": " ++ m }
         Received ts m -> { color = "#dfd", text = (formatTs ts) ++ ": " ++ m }
+        Opened  ts ws -> { color = "#dfd", text = (formatTs ts) ++ ": Opened " ++ ws}
+        Closed  ts ws -> { color = "#fdd", text = (formatTs ts) ++ ": Closed " ++ ws}
   in
     div []
       [ text o.text
