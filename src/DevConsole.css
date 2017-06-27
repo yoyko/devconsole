@@ -1,3 +1,12 @@
 .incomming { background-color: #dfd; }
 .outgoing  { background-color: #ddf; }
 .error     { background-color: #fdd; }
+
+/* Expand the main content to the bottom */
+.mdl-layout__content { display: flex; flex-direction: column; }
+.console { display: flex; flex-direction: column; flex-grow: 1; }
+.messages { flex-grow: 1; }
+
+/* Message edit fills whole width */
+.messageEdit { display: flex; flex-direction: row; }
+.messageEdit > input { flex-grow: 1; }

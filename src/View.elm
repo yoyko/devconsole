@@ -34,15 +34,18 @@ header model =
 consoleView : Model -> Html Msg
 consoleView model =
   div
-    []
+    [ class "console" ]
     [ messages model.connection.messages
-    , input [ onInput Input, defaultValue model.input ] []
-    , button [ onClick SendRequest ] [ text "Send" ]
+    , div
+      [ class "messageEdit" ]
+      [ input [ onInput Input, defaultValue model.input ] []
+      , button [ onClick SendRequest ] [ text "Send" ]
+      ]
     ]
 
 messages : List Message -> Html Msg
 messages msgs =
-  div []
+  div [ class "messages" ]
     ( List.map message msgs
     )
 
