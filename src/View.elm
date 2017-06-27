@@ -37,16 +37,16 @@ message msg =
   let
     o =
       case msg of
-        Sent ts m -> { bg = "#ddf", text =  (formatTs ts) ++ ": "++ m }
+        Sent ts m -> { cls = "outgoing", text =  (formatTs ts) ++ ": "++ m }
         Received ts m -> {- TODO parse of course ;) -}
-          { bg = if String.contains """"error":""" m then "#fdd" else "#dfd"
+          { cls = if String.contains """"error":""" m then "error" else "incomming"
           , text = (formatTs ts) ++ ": " ++ m
           }
-        Opened ts ws -> { bg = "#dfd", text = (formatTs ts) ++ ": Opened " ++ ws}
-        Closed ts ws -> { bg = "#fdd", text = (formatTs ts) ++ ": Closed " ++ ws}
+        Opened ts ws -> { cls = "incomming", text = (formatTs ts) ++ ": Opened " ++ ws}
+        Closed ts ws -> { cls = "error", text = (formatTs ts) ++ ": Closed " ++ ws}
   in
-    div {- TODO use css -}
-      [ style [ ("backgroundColor", o.bg) ]
+    div
+      [ class o.cls
       ]
       [ text o.text
       ]
