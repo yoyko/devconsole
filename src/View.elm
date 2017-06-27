@@ -2,8 +2,9 @@ module View exposing (view)
 import Model exposing (Model, Msg(..))
 import Connection exposing (Message(..))
 import Html exposing (Html, div, h1, text, input, button)
-import Html.Attributes exposing (defaultValue, style)
+import Html.Attributes exposing (defaultValue, class, style)
 import Html.Events exposing (onInput, onClick)
+import Material.Layout as Layout
 import Time
 import Date
 import Date.Extra.Format
@@ -11,12 +12,30 @@ import Date.Extra.Config.Configs
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ h1 []
-      [ text "DevConsole"
-      ]
-    , text <| "Url: " ++ model.connection.url
-    , messages model.connection.messages
+  Layout.render Mdl model.mdl
+    [
+    ]
+    { header = header model
+    , drawer = []
+    , tabs = ( [], [] )
+    , main = [ consoleView model ]
+    }
+
+header : Model -> List (Html Msg)
+header model =
+  [ Layout.row
+    []
+    [ Layout.title [] [ text "DevConsole" ]
+    , Layout.spacer
+    , text model.connection.url
+    ]
+  ]
+
+consoleView : Model -> Html Msg
+consoleView model =
+  div
+    []
+    [ messages model.connection.messages
     , input [ onInput Input, defaultValue model.input ] []
     , button [ onClick SendRequest ] [ text "Send" ]
     ]

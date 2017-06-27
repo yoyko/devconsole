@@ -4,22 +4,22 @@ import Model exposing (Model, Msg(..))
 import Connection
 import Update
 import View
+import Material
 
 main : Program Never Model Msg
 main =
   Html.program
-    { init = init
+    { init = Model.init
     , update = Update.update
     , view = View.view
     , subscriptions = subscriptions
     }
 
-init : ( Model, Cmd Msg )
-init =
-  ( Model.initialModel, Cmd.none )
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Connection.subscriptions Conn model.connection
+  Sub.batch
+    [ Connection.subscriptions Conn model.connection
+    , Material.subscriptions Mdl model
+    ]
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
