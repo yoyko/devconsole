@@ -9,6 +9,7 @@ import Time
 import Date
 import Date.Extra.Format
 import Date.Extra.Config.Configs
+import Message.Edit
 
 view : Model -> Html Msg
 view model =
@@ -36,11 +37,7 @@ consoleView model =
   div
     [ class "console" ]
     [ messages model.connection.messages
-    , div
-      [ class "messageEdit" ]
-      [ input [ onInput Input, defaultValue model.input ] []
-      , button [ onClick SendRequest ] [ text "Send" ]
-      ]
+    , Message.Edit.view Edit SendRequest model.edit (Model.context model)
     ]
 
 messages : List Message -> Html Msg
