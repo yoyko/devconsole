@@ -9,10 +9,11 @@ import Platform.Cmd
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Conn msg_ ->
-      Model.applyConnection model <| Connection.update Conn msg_ model.connection
     Mdl msg_ ->
       Material.update Mdl msg_ model
+    Conn msg_ ->
+      Connection.update Conn msg_ model.connection
+      |> Model.applyConnection model
     SendRequest message ->
       Connection.send Conn model.connection message
       |> Model.applyConnection model
