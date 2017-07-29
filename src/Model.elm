@@ -1,4 +1,4 @@
-module Model exposing (Model, Msg(..), init, initialModel, initialCmd, applyConnection)
+module Model exposing (Model, Msg(..), init, initialModel, initialCmd)
 import Connection
 import Material
 import Message.Edit as Edit
@@ -9,14 +9,6 @@ type alias Model =
   , mdl : Material.Model
   , edit : Edit.Model
   }
-
-apply : (m -> Model) -> (m, Cmd msg) -> (Model, Cmd msg)
-apply setter =
-  Tuple.mapFirst setter
-
-applyConnection : Model -> (Connection.Model, Cmd msg) -> (Model, Cmd msg)
-applyConnection model =
-  apply (\m -> { model | connection = m})
 
 initialModel : Model
 initialModel =
