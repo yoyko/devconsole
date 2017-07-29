@@ -37,8 +37,11 @@ consoleView model =
   div
     [ class "console" ]
     [ messages model.connection.messages
-    , Message.Edit.view Edit SendRequest model.edit (Model.context model)
+    , Message.Edit.view (editContext model) model.edit
     ]
+
+editContext model =
+  Message.Edit.context Edit SendRequest Mdl model.mdl
 
 messages : List Message -> Html Msg
 messages msgs =

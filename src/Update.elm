@@ -21,7 +21,7 @@ update msg model =
       (flip (Connection.send Conn)) message
       |> delegate connection model
     Edit msg_ ->
-      Edit.update Edit msg_ (Model.context model)
+      Edit.update msg_
       |> delegate edit model
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

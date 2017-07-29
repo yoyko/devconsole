@@ -1,8 +1,8 @@
-module Message.Edit exposing (Model, Msg(..), model, update, view)
+module Message.Edit exposing (Model, Msg(..), model, context, update, view)
 import Html exposing (Html, div, text, input, button)
 import Html.Attributes exposing (defaultValue, class)
 import Html.Events exposing (onInput, onClick)
-import Context exposing (Context)
+import Material
 
 type alias Model =
   { input : String
@@ -13,21 +13,36 @@ model =
   { input = """{"method":"ping"}"""
   }
 
-
 type Msg
   = Input String
 
-update : (Msg -> msg) -> Msg -> Model -> Context msg -> (Model, Cmd msg)
-update lift msg model ctx =
+type alias Context  msg =
+  { msgLift : Msg -> msg
+  , sendRequest : String -> msg
+  , mdlLift : Material.Msg msg -> msg
+  , mdl : Material.Model
+  }
+
+context
+  : (Msg -> msg)
+    -> (String -> msg)
+    -> (Material.Msg msg -> msg)
+    -> Material.Model
+    -> Context msg
+context msgLift sendRequest mdlLift mdl =
+  { msgLift = msgLift, sendRequest = sendRequest, mdlLift =  mdlLift, mdl = mdl }
+
+update : Msg -> Model -> (Model, Cmd msg)
+update msg model =
   case msg of
     Input newInput -> ( { model | input = newInput }, Cmd.none )
 
-view : (Msg -> msg) -> (String -> msg) -> Model -> Context msg -> Html msg
-view msgLift sendRequest model ctx =
+view : Context msg -> Model -> Html msg
+view ctx model =
   div
     [ class "messageEdit" ]
-    [ input [ onInput (msgLift << Input), defaultValue model.input ] []
-    , button [ onClick (sendRequest (messageToSend model)) ] [ text "Send" ]
+    [ input [ onInput (ctx.msgLift << Input), defaultValue model.input ] []
+    , button [ onClick (ctx.sendRequest (messageToSend model)) ] [ text "Send" ]
     ]
 
 messageToSend : Model -> String

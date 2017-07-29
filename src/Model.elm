@@ -1,5 +1,4 @@
-module Model exposing (Model, Msg(..), init, initialModel, initialCmd, applyConnection, context)
-import Context
+module Model exposing (Model, Msg(..), init, initialModel, initialCmd, applyConnection)
 import Connection
 import Material
 import Message.Edit as Edit
@@ -33,10 +32,6 @@ initialCmd =
 init : ( Model, Cmd Msg )
 init =
   ( initialModel, initialCmd )
-
-context : Model -> Context.Context Msg
-context model =
-  { mdl = model.mdl, mdlLift = Mdl }
 
 
 type Msg
