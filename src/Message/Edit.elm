@@ -1,20 +1,32 @@
 module Message.Edit exposing (Model, Msg(..), model, context, update, view)
-import Html exposing (Html, div, text, input, button)
-import Html.Attributes exposing (defaultValue, class)
-import Html.Events exposing (onInput, onClick)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
 import Material
+import Material.Icon as Icon
+import Material.Options as Options
+import Material.Tabs as Tabs
+import Material.Textfield as Textfield
+import Material.Button as Button
+import Json.Encode
+import Json.Decode
 
 type alias Model =
-  { input : String
+  { activeTab : Int
+  , rawMessage : String
+  , url : String
   }
 
 model : Model
 model =
-  { input = """{"method":"ping"}"""
+  { activeTab = 0
+  , rawMessage = """{"method":"ping"}"""
+  , url = "/stable/av/volume"
   }
 
 type Msg
-  = Input String
+  = SelectEditTab Int
+  | RawMessage String
+  | Url String
 
 type alias Context  msg =
   { msgLift : Msg -> msg
@@ -34,18 +46,107 @@ context msgLift sendRequest mdlLift mdl =
 
 update : Msg -> Model -> (Model, Cmd msg)
 update msg model =
-  case msg of
-    Input newInput -> ( { model | input = newInput }, Cmd.none )
+  let
+    m =
+      case msg of
+        SelectEditTab idx -> { model | activeTab = idx }
+        RawMessage m      -> { model | rawMessage = m }
+        Url url           -> { model | url = url }
+  in
+    ( m, Cmd.none )
 
 view : Context msg -> Model -> Html msg
 view ctx model =
+  let
+    tabLabel t =
+      Tabs.label
+        [ Options.center ]
+        ( case t of
+          Raw -> [ Icon.i "code", text "Raw" ]
+          Observe -> [ Icon.i "info_outline", text "observeItem" ]
+        )
+  in
+    Tabs.render ctx.mdlLift [2] ctx.mdl
+      [ Tabs.activeTab model.activeTab
+      , Tabs.onSelectTab (ctx.msgLift << SelectEditTab)
+      , Options.cs "messageEdit"
+      ]
+      ( List.map tabLabel showTabs )
+      [ case tabAtIndex model.activeTab of
+          Raw -> rawEdit ctx model
+          Observe -> observeEdit ctx model
+      ]
+
+type EditTab
+  = Raw
+  | Observe
+
+showTabs : List EditTab
+showTabs = [ Raw, Observe ]
+
+tabAtIndex : Int -> EditTab
+tabAtIndex i =
+  showTabs
+  |> List.drop i
+  |> List.head
+  |> Maybe.withDefault Raw
+
+rawEdit : Context msg -> Model -> Html msg
+rawEdit ctx model =
   div
-    [ class "messageEdit" ]
-    [ input [ onInput (ctx.msgLift << Input), defaultValue model.input ] []
-    , button [ onClick (ctx.sendRequest (messageToSend model)) ] [ text "Send" ]
+    [ class "rawEdit" ]
+    [ Textfield.render ctx.mdlLift [2, 1] ctx.mdl
+        [ Options.cs "message"
+        , Textfield.label "Message"
+        , Textfield.floatingLabel
+        , Textfield.autofocus
+        , Textfield.value model.rawMessage
+        , Options.onInput (ctx.msgLift << RawMessage)
+        , Textfield.error "Invalid JSON"
+            |> Options.when (not <| validJsonString model.rawMessage)
+        ]
+        []
+    , sendButton ctx model <| model.rawMessage
     ]
 
-messageToSend : Model -> String
-messageToSend = .input
+observeEdit : Context msg -> Model -> Html msg
+observeEdit ctx model =
+  div
+    [ class "observeEdit" ]
+    [ Textfield.render ctx.mdlLift [2, 2] ctx.mdl
+        [ Options.cs "url"
+        , Textfield.label "Url"
+        , Textfield.floatingLabel
+        , Textfield.autofocus
+        , Textfield.value model.url
+        , Options.onInput (ctx.msgLift << Url)
+        ]
+        []
+    , sendButton ctx model <| observeMessage model
+    ]
+
+observeMessage : Model -> String
+observeMessage model =
+  Json.Encode.encode 0
+    <| Json.Encode.object
+      [ ("method", Json.Encode.string "observeItem")
+      , ("url", Json.Encode.string model.url)
+      ]
+
+
+sendButton : Context msg -> Model -> String -> Html msg
+sendButton ctx model message =
+  Button.render ctx.mdlLift [2, 0] ctx.mdl
+    [ Button.raised
+    , Button.ripple
+    , Options.onClick (ctx.sendRequest message)
+    ]
+    [ text "Send", Icon.i "send" ]
+
+
+validJsonString : String -> Bool
+validJsonString str =
+  Json.Decode.decodeString (Json.Decode.succeed True) str
+  |> Result.withDefault False
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

@@ -7,6 +7,14 @@
 .console { display: flex; flex-direction: column; flex-grow: 1; }
 .messages { flex-grow: 1; }
 
-/* Message edit fills whole width */
-.messageEdit { display: flex; flex-direction: row; }
-.messageEdit > input { flex-grow: 1; }
+/* Fixup texfield error messages expanding bottom and creating scrollbars */
+.mdl-textfield__error { margin-top: 0; }
+
+.rawEdit { display: flex; flex-direction: row; align-items: baseline; }
+.rawEdit .message { flex-grow: 1; }
+
+.observeEdit { display: flex; flex-direction: row; align-items: baseline; }
+.observeEdit .url { flex-grow: 1; }
+
+button > i { margin-left: 0.3em; }
+.mdl-tabs__tab > i { margin-right: 0.3em; }
