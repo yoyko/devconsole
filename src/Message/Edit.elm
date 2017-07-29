@@ -22,9 +22,6 @@ update lift msg model ctx =
   case msg of
     Input newInput -> ( { model | input = newInput }, Cmd.none )
 
-messageToSend : Model -> String
-messageToSend = .input
-
 view : (Msg -> msg) -> (String -> msg) -> Model -> Context msg -> Html msg
 view msgLift sendRequest model ctx =
   div
@@ -32,5 +29,8 @@ view msgLift sendRequest model ctx =
     [ input [ onInput (msgLift << Input), defaultValue model.input ] []
     , button [ onClick (sendRequest (messageToSend model)) ] [ text "Send" ]
     ]
+
+messageToSend : Model -> String
+messageToSend = .input
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
