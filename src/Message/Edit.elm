@@ -178,9 +178,11 @@ messageToSend model =
         |> Json.Encode.object
         |> Json.Encode.encode 0
 
+{- We really check for a valid json object, not just any json value. -}
 validJsonString : String -> Bool
 validJsonString str =
-  Json.Decode.decodeString (Json.Decode.succeed True) str
+  Json.Decode.decodeString (Json.Decode.keyValuePairs Json.Decode.value) str
+  |> Result.map (always True)
   |> Result.withDefault False
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
