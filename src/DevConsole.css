@@ -5,7 +5,7 @@
 /* Expand the main content to the bottom */
 .mdl-layout__content { display: flex; flex-direction: column; }
 .console { display: flex; flex-direction: column; flex-grow: 1; }
-.messages { flex-grow: 1; }
+.messages { flex-grow: 1; overflow: auto; }
 
 /* Fixup texfield error messages expanding bottom and creating scrollbars */
 .mdl-textfield__error { margin-top: 0; }
