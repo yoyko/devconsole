@@ -91,6 +91,10 @@ tabAtIndex i =
   |> List.head
   |> Maybe.withDefault Raw
 
+activeTab : Model -> EditTab
+activeTab =
+  .activeTab >> tabAtIndex
+
 rawEdit : Context msg -> Model -> Html msg
 rawEdit ctx model =
   div
@@ -106,8 +110,12 @@ rawEdit ctx model =
             |> Options.when (not <| validJsonString model.rawMessage)
         ]
         []
-    , sendButton ctx model <| model.rawMessage
+    , sendButton ctx model
     ]
+
+rawResult : Model -> Result String Json.Encode.Value
+rawResult =
+  .rawMessage >> Json.Decode.decodeString Json.Decode.value
 
 observeEdit : Context msg -> Model -> Html msg
 observeEdit ctx model =
@@ -122,27 +130,53 @@ observeEdit ctx model =
         , Options.onInput (ctx.msgLift << Url)
         ]
         []
-    , sendButton ctx model <| observeMessage model
+    , sendButton ctx model
     ]
 
-observeMessage : Model -> String
-observeMessage model =
-  Json.Encode.encode 0
-    <| Json.Encode.object
-      [ ("method", Json.Encode.string "observeItem")
-      , ("url", Json.Encode.string model.url)
-      ]
+observeResult : Model -> Result String Json.Encode.Value
+observeResult model =
+  Ok <| Json.Encode.object
+    [ ("method", Json.Encode.string "observeItem")
+    , ("url", Json.Encode.string model.url)
+    ]
 
 
-sendButton : Context msg -> Model -> String -> Html msg
-sendButton ctx model message =
+sendButton : Context msg -> Model -> Html msg
+sendButton ctx model =
   Button.render ctx.mdlLift [2, 0] ctx.mdl
     [ Button.raised
     , Button.ripple
-    , Options.onClick (ctx.sendRequest message)
+    , Options.onClick (ctx.sendRequest <| messageToSend model)
     ]
     [ text "Send", Icon.i "send" ]
 
+
+editResult : Model -> Result String Json.Encode.Value
+editResult model =
+  case activeTab model of
+    Raw -> rawResult model
+    Observe -> observeResult model
+
+{-
+  If the edit result is not a corret object, but we are on the raw edit, send
+  the original string anyway (if that's what the user wants...)
+  Otherwise we "deconstruct" json object into key/value pairs, and reconstruct
+  it again as a preparation for inserting an id later ;)
+-}
+messageToSend : Model -> String
+messageToSend model =
+  let
+    keyValues =
+      editResult model
+      |> Result.andThen (Json.Decode.decodeValue (Json.Decode.keyValuePairs Json.Decode.value))
+  in
+    case (activeTab model, keyValues) of
+      (Raw, Err e) -> model.rawMessage
+      _ ->
+        keyValues
+        |> Result.withDefault []
+        |> Json.Encode.object
+        |> Json.Encode.encode 0
 
 validJsonString : String -> Bool
 validJsonString str =
