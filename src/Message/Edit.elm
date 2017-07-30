@@ -1,17 +1,27 @@
 module Message.Edit exposing (Model, Msg(..), model, context, update, view)
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, text, input)
+import Html.Attributes exposing (class, type_, placeholder, value)
+import Html.Events exposing (onInput)
 import Material
 import Material.Icon as Icon
 import Material.Options as Options
 import Material.Tabs as Tabs
 import Material.Textfield as Textfield
 import Material.Button as Button
+import Material.Toggles as Toggles
 import Json.Encode
 import Json.Decode
 
+type Id
+  = AutoInc
+  | None
+  | Custom
+
 type alias Model =
   { activeTab : Int
+  , id : Id
+  , nextAutoId : Int
+  , customId : String
   , rawMessage : String
   , url : String
   }
@@ -19,12 +29,18 @@ type alias Model =
 model : Model
 model =
   { activeTab = 0
+  , id = AutoInc
+  , nextAutoId = 0
+  , customId = ""
   , rawMessage = """{"method":"ping"}"""
   , url = "/stable/av/volume"
   }
 
 type Msg
   = SelectEditTab Int
+  | Id Id
+  | NextId
+  | CustomId String
   | RawMessage String
   | Url String
 
@@ -50,6 +66,9 @@ update msg model =
     m =
       case msg of
         SelectEditTab idx -> { model | activeTab = idx }
+        Id id             -> { model | id = id }
+        NextId            -> { model | nextAutoId = model.nextAutoId + 1 }
+        CustomId id       -> { model | customId= id }
         RawMessage m      -> { model | rawMessage = m }
         Url url           -> { model | url = url }
   in
@@ -110,6 +129,7 @@ rawEdit ctx model =
             |> Options.when (not <| validJsonString model.rawMessage)
         ]
         []
+    , idSelect ctx model
     , sendButton ctx model
     ]
 
@@ -130,6 +150,7 @@ observeEdit ctx model =
         , Options.onInput (ctx.msgLift << Url)
         ]
         []
+    , idSelect ctx model
     , sendButton ctx model
     ]
 
@@ -150,6 +171,52 @@ sendButton ctx model =
     ]
     [ text "Send", Icon.i "send" ]
 
+idSelect : Context msg -> Model -> Html msg
+idSelect ctx model =
+  div
+    [ class "idSelect"
+    ]
+    [ text <| "Id: " ++ (id model |> Maybe.withDefault "-")
+    , div
+        [ class "autonone"]
+        [ Toggles.radio ctx.mdlLift [2, 0, 1] ctx.mdl
+            [ Toggles.group "idSelect"
+            , Toggles.ripple
+            , Toggles.value (model.id == AutoInc)
+            , Options.onToggle <| ctx.msgLift <| Id AutoInc
+            ]
+            [ text <| "Auto (" ++ (toString model.nextAutoId) ++ ")" ]
+        , Toggles.radio ctx.mdlLift [2, 0, 2] ctx.mdl
+            [ Toggles.group "idSelect"
+            , Toggles.ripple
+            , Toggles.value (model.id == None)
+            , Options.onToggle <| ctx.msgLift <| Id None
+            ]
+            [ text "None" ]
+        ]
+    , Toggles.radio ctx.mdlLift [2, 0, 3] ctx.mdl
+        [ Toggles.group "idSelect"
+        , Toggles.ripple
+        , Toggles.value (model.id == Custom)
+        , Options.onToggle <| ctx.msgLift <| Id <| Custom
+        ]
+        [ input
+            [ class ".mdl-textfield__input"
+            , type_ "text"
+            , placeholder "Custom"
+            , value model.customId
+            , onInput (ctx.msgLift << CustomId)
+            ]
+            []
+        ]
+    ]
+
+id : Model -> Maybe String
+id model =
+  case model.id of
+    AutoInc -> Just <| toString model.nextAutoId
+    None -> Nothing
+    Custom -> Just model.customId
 
 editResult : Model -> Result String Json.Encode.Value
 editResult model =

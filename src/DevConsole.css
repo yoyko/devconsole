@@ -10,11 +10,16 @@
 /* Fixup texfield error messages expanding bottom and creating scrollbars */
 .mdl-textfield__error { margin-top: 0; }
 
-.rawEdit { display: flex; flex-direction: row; align-items: baseline; }
-.rawEdit .message { flex-grow: 1; }
+.idSelect { display: flex; flex-direction: column; padding: 0 0.5em; text-align: center; }
+.idSelect .autonone { display: flex; flex-direction: row; justify-content: space-around; }
 
-.observeEdit { display: flex; flex-direction: row; align-items: baseline; }
+.rawEdit { display: flex; flex-direction: row; align-items: flex-end; }
+.rawEdit .message { flex-grow: 1; }
+.rawEdit button { align-self: stretch ; height: auto; }
+
+.observeEdit { display: flex; flex-direction: row; align-items: flex-end; }
 .observeEdit .url { flex-grow: 1; }
+.observeEdit button { align-self: stretch ; height: auto; }
 
 button > i { margin-left: 0.3em; }
 .mdl-tabs__tab > i { margin-right: 0.3em; }
