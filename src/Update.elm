@@ -18,8 +18,11 @@ update msg model =
       Connection.update Conn msg_
       |> delegate connection model
     SendRequest message ->
-      (flip (Connection.send Conn)) message
-      |> delegate connection model
+      let
+        (cm, cc) = Connection.send Conn model.connection message
+        (em, ec) = Edit.update Edit.NextId model.edit
+      in
+        ({ model | connection = cm, edit = em }, Cmd.batch [cc, ec])
     Edit msg_ ->
       Edit.update msg_
       |> delegate edit model
