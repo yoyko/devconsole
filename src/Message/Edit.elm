@@ -218,6 +218,13 @@ id model =
     None -> Nothing
     Custom -> Just model.customId
 
+idValue : Model -> Maybe ( String, Json.Encode.Value)
+idValue model =
+  model
+  |> id
+  |> Maybe.map Json.Encode.string
+  |> Maybe.map ((,) "id")
+
 editResult : Model -> Result String Json.Encode.Value
 editResult model =
   case activeTab model of
@@ -227,8 +234,9 @@ editResult model =
 {-
   If the edit result is not a corret object, but we are on the raw edit, send
   the original string anyway (if that's what the user wants...)
-  Otherwise we "deconstruct" json object into key/value pairs, and reconstruct
-  it again as a preparation for inserting an id later ;)
+  Otherwise we "deconstruct" json object into key/value pairs, prepend the id
+  and reconstruct the object (and encode it to string).  If the origin object
+  included an id (such as one typed into raw edit) it will prevail.
 -}
 messageToSend : Model -> String
 messageToSend model =
@@ -242,6 +250,7 @@ messageToSend model =
       _ ->
         keyValues
         |> Result.withDefault []
+        |> (++) (List.filterMap identity [ idValue model ])
         |> Json.Encode.object
         |> Json.Encode.encode 0
 
