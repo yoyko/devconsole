@@ -46,11 +46,11 @@ view ctx model =
       ]
 
 type EditTab
-  = Raw
-  | ObserveItem
+  = ObserveItem
+  | Raw
 
 showTabs : List EditTab
-showTabs = [ Raw, ObserveItem ]
+showTabs = [ ObserveItem, Raw ]
 
 tabAtIndex : Int -> EditTab
 tabAtIndex i =
@@ -66,19 +66,19 @@ activeTab =
 tabLabelText : EditTab -> List (Html msg)
 tabLabelText tab =
   case tab of
-    Raw         -> [ Icon.i "code", text "Raw" ]
     ObserveItem -> [ Icon.i "info_outline", text "observeItem" ]
+    Raw         -> [ Icon.i "code", text "Raw" ]
 
 tabContent tab =
   case tab of
-    Raw         -> rawEdit
     ObserveItem -> observeItemEdit
+    Raw         -> rawEdit
 
 tabEditResult : EditTab -> Model -> Result String Json.Encode.Value
 tabEditResult tab=
   case tab of
-    Raw -> rawResult
     ObserveItem -> observeItemResult
+    Raw -> rawResult
 
 sendWithId : Context msg -> Model -> Html msg
 sendWithId ctx model =
