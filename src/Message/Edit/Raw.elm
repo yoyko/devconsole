@@ -2,6 +2,7 @@ module Message.Edit.Raw exposing (rawEdit, rawResult)
 import Message.Edit.Model exposing (Model, Msg(..), Context)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
+import Message.Edit.Parts as Parts exposing (textfield)
 import Material.Options as Options
 import Material.Textfield as Textfield
 import Json.Encode
@@ -11,17 +12,11 @@ rawEdit : Context msg -> (Context msg -> Model -> Html msg) -> Model -> Html msg
 rawEdit ctx send model =
   div
     [ class "rawEdit" ]
-    [ Textfield.render ctx.mdlLift [2, 1] ctx.mdl
-        [ Options.cs "message"
-        , Textfield.label "Message"
-        , Textfield.floatingLabel
-        , Textfield.autofocus
-        , Textfield.value model.rawMessage
-        , Options.onInput (ctx.msgLift << RawMessage)
+    [ textfield ctx [2, 1] "Message" model.rawMessage RawMessage
+        [ Textfield.autofocus
         , Textfield.error "Invalid JSON"
             |> Options.when (not <| validJsonString model.rawMessage)
         ]
-        []
     , send ctx model
     ]
 

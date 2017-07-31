@@ -2,23 +2,14 @@ module Message.Edit.ObserveItem exposing (observeItemEdit, observeItemResult)
 import Message.Edit.Model exposing (Model, Msg(..), Context)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
-import Material.Options as Options
-import Material.Textfield as Textfield
+import Message.Edit.Parts as Parts
 import Json.Encode
 
 observeItemEdit : Context msg -> (Context msg -> Model -> Html msg) -> Model -> Html msg
 observeItemEdit ctx send model =
   div
     [ class "observeEdit" ]
-    [ Textfield.render ctx.mdlLift [2, 2] ctx.mdl
-        [ Options.cs "url"
-        , Textfield.label "Url"
-        , Textfield.floatingLabel
-        , Textfield.autofocus
-        , Textfield.value model.url
-        , Options.onInput (ctx.msgLift << Url)
-        ]
-        []
+    [ Parts.url ctx [2, 2] model
     , send ctx model
     ]
 

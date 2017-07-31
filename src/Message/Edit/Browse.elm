@@ -2,39 +2,16 @@ module Message.Edit.Browse exposing (browseEdit, browseResult)
 import Message.Edit.Model exposing (Model, Msg(..), Context)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
-import Material.Options as Options
-import Material.Textfield as Textfield
+import Message.Edit.Parts as Parts exposing (textfield)
 import Json.Encode
 
 browseEdit : Context msg -> (Context msg -> Model -> Html msg) -> Model -> Html msg
 browseEdit ctx send model =
   div
     [ class "browseEdit" ]
-    [ Textfield.render ctx.mdlLift [2, 3, 0] ctx.mdl
-        [ Options.cs "url"
-        , Textfield.label "Url"
-        , Textfield.floatingLabel
-        , Textfield.autofocus
-        , Textfield.value model.url
-        , Options.onInput (ctx.msgLift << Url)
-        ]
-        []
-    , Textfield.render ctx.mdlLift [2, 3, 1] ctx.mdl
-        [ Options.cs "from"
-        , Textfield.label "from"
-        , Textfield.floatingLabel
-        , Textfield.value model.browseFrom
-        , Options.onInput (ctx.msgLift << BrowseFrom)
-        ]
-        []
-    , Textfield.render ctx.mdlLift [2, 3, 2] ctx.mdl
-        [ Options.cs "count"
-        , Textfield.label "count"
-        , Textfield.floatingLabel
-        , Textfield.value model.browseCount
-        , Options.onInput (ctx.msgLift << BrowseCount)
-        ]
-        []
+    [ Parts.url ctx [2, 3, 0] model
+    , textfield ctx [2, 3, 1] "from" model.browseFrom BrowseFrom []
+    , textfield ctx [2, 3, 2] "count" model.browseCount BrowseCount []
     , send ctx model
     ]
 
