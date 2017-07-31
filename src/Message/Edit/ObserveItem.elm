@@ -25,8 +25,8 @@ observeItemEdit ctx send model =
 observeItemResult : Model -> Result String Json.Encode.Value
 observeItemResult model =
   Ok <| Json.Encode.object
-    [ ("method", Json.Encode.string "observeItem")
-    , ("url", Json.Encode.string model.url)
+    [ ("url", Json.Encode.string model.url)
+    , ("method", Json.Encode.string "observeItem")
     ]
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
