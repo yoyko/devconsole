@@ -1,67 +1,17 @@
-module Message.Edit exposing (Model, Msg(..), model, context, update, view)
+module Message.Edit exposing (update, view)
+import Message.Edit.Model exposing (Model, Msg(..), Id(..), Context, model, context)
+import Message.Edit.Raw exposing (rawEdit, rawResult)
+import Message.Edit.ObserveItem exposing (observeItemEdit, observeItemResult)
 import Html exposing (Html, div, text, input)
 import Html.Attributes exposing (class, classList, type_, placeholder, value)
 import Html.Events exposing (onInput, onClick)
-import Material
 import Material.Icon as Icon
 import Material.Options as Options
 import Material.Tabs as Tabs
-import Material.Textfield as Textfield
 import Material.Button as Button
 import Material.Toggles as Toggles
 import Json.Encode
 import Json.Decode
-
-type Id
-  = AutoInc
-  | None
-  | Custom
-
-type alias Model =
-  { activeTab : Int
-  , id : Id
-  , nextAutoId : Int
-  , customId : String
-  , expandedId : Bool
-  , rawMessage : String
-  , url : String
-  }
-
-model : Model
-model =
-  { activeTab = 0
-  , id = AutoInc
-  , nextAutoId = 0
-  , customId = ""
-  , expandedId = False
-  , rawMessage = """{"method":"ping"}"""
-  , url = "/stable/av/volume"
-  }
-
-type Msg
-  = SelectEditTab Int
-  | Id Id
-  | NextId
-  | CustomId String
-  | ToggleExpandedId
-  | RawMessage String
-  | Url String
-
-type alias Context  msg =
-  { msgLift : Msg -> msg
-  , sendRequest : String -> msg
-  , mdlLift : Material.Msg msg -> msg
-  , mdl : Material.Model
-  }
-
-context
-  : (Msg -> msg)
-    -> (String -> msg)
-    -> (Material.Msg msg -> msg)
-    -> Material.Model
-    -> Context msg
-context msgLift sendRequest mdlLift mdl =
-  { msgLift = msgLift, sendRequest = sendRequest, mdlLift =  mdlLift, mdl = mdl }
 
 update : Msg -> Model -> (Model, Cmd msg)
 update msg model =
@@ -84,10 +34,7 @@ view ctx model =
     tabLabel t =
       Tabs.label
         [ Options.center ]
-        ( case t of
-          Raw -> [ Icon.i "code", text "Raw" ]
-          Observe -> [ Icon.i "info_outline", text "observeItem" ]
-        )
+        (tabLabelText t)
   in
     Tabs.render ctx.mdlLift [2] ctx.mdl
       [ Tabs.activeTab model.activeTab
@@ -95,17 +42,15 @@ view ctx model =
       , Options.cs "messageEdit"
       ]
       ( List.map tabLabel showTabs )
-      [ case tabAtIndex model.activeTab of
-          Raw -> rawEdit ctx model
-          Observe -> observeEdit ctx model
+      [ tabContent (tabAtIndex model.activeTab) ctx sendWithId model
       ]
 
 type EditTab
   = Raw
-  | Observe
+  | ObserveItem
 
 showTabs : List EditTab
-showTabs = [ Raw, Observe ]
+showTabs = [ Raw, ObserveItem ]
 
 tabAtIndex : Int -> EditTab
 tabAtIndex i =
@@ -118,50 +63,22 @@ activeTab : Model -> EditTab
 activeTab =
   .activeTab >> tabAtIndex
 
-rawEdit : Context msg -> Model -> Html msg
-rawEdit ctx model =
-  div
-    [ class "rawEdit" ]
-    [ Textfield.render ctx.mdlLift [2, 1] ctx.mdl
-        [ Options.cs "message"
-        , Textfield.label "Message"
-        , Textfield.floatingLabel
-        , Textfield.autofocus
-        , Textfield.value model.rawMessage
-        , Options.onInput (ctx.msgLift << RawMessage)
-        , Textfield.error "Invalid JSON"
-            |> Options.when (not <| validJsonString model.rawMessage)
-        ]
-        []
-    , sendWithId ctx model
-    ]
+tabLabelText : EditTab -> List (Html msg)
+tabLabelText tab =
+  case tab of
+    Raw         -> [ Icon.i "code", text "Raw" ]
+    ObserveItem -> [ Icon.i "info_outline", text "observeItem" ]
 
-rawResult : Model -> Result String Json.Encode.Value
-rawResult =
-  .rawMessage >> Json.Decode.decodeString Json.Decode.value
+tabContent tab =
+  case tab of
+    Raw         -> rawEdit
+    ObserveItem -> observeItemEdit
 
-observeEdit : Context msg -> Model -> Html msg
-observeEdit ctx model =
-  div
-    [ class "observeEdit" ]
-    [ Textfield.render ctx.mdlLift [2, 2] ctx.mdl
-        [ Options.cs "url"
-        , Textfield.label "Url"
-        , Textfield.floatingLabel
-        , Textfield.autofocus
-        , Textfield.value model.url
-        , Options.onInput (ctx.msgLift << Url)
-        ]
-        []
-    , sendWithId ctx model
-    ]
-
-observeResult : Model -> Result String Json.Encode.Value
-observeResult model =
-  Ok <| Json.Encode.object
-    [ ("method", Json.Encode.string "observeItem")
-    , ("url", Json.Encode.string model.url)
-    ]
+tabEditResult : EditTab -> Model -> Result String Json.Encode.Value
+tabEditResult tab=
+  case tab of
+    Raw -> rawResult
+    ObserveItem -> observeItemResult
 
 sendWithId : Context msg -> Model -> Html msg
 sendWithId ctx model =
@@ -248,12 +165,6 @@ idValue model =
   |> Maybe.map Json.Encode.string
   |> Maybe.map ((,) "id")
 
-editResult : Model -> Result String Json.Encode.Value
-editResult model =
-  case activeTab model of
-    Raw -> rawResult model
-    Observe -> observeResult model
-
 {-
   If the edit result is not a corret object, but we are on the raw edit, send
   the original string anyway (if that's what the user wants...)
@@ -265,7 +176,7 @@ messageToSend : Model -> String
 messageToSend model =
   let
     keyValues =
-      editResult model
+      tabEditResult (tabAtIndex model.activeTab) model
       |> Result.andThen (Json.Decode.decodeValue (Json.Decode.keyValuePairs Json.Decode.value))
   in
     case (activeTab model, keyValues) of
@@ -276,12 +187,5 @@ messageToSend model =
         |> (++) (List.filterMap identity [ idValue model ])
         |> Json.Encode.object
         |> Json.Encode.encode 0
-
-{- We really check for a valid json object, not just any json value. -}
-validJsonString : String -> Bool
-validJsonString str =
-  Json.Decode.decodeString (Json.Decode.keyValuePairs Json.Decode.value) str
-  |> Result.map (always True)
-  |> Result.withDefault False
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

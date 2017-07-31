@@ -1,7 +1,7 @@
 module Model exposing (Model, Msg(..), init, initialModel, initialCmd)
 import Connection
 import Material
-import Message.Edit as Edit
+import Message.Edit.Model as Edit
 
 
 type alias Model =

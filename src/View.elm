@@ -10,6 +10,7 @@ import Date
 import Date.Extra.Format
 import Date.Extra.Config.Configs
 import Message.Edit
+import Message.Edit.Model
 
 view : Model -> Html Msg
 view model =
@@ -41,7 +42,7 @@ consoleView model =
     ]
 
 editContext model =
-  Message.Edit.context Edit SendRequest Mdl model.mdl
+  Message.Edit.Model.context Edit SendRequest Mdl model.mdl
 
 messages : List Message -> Html Msg
 messages msgs =

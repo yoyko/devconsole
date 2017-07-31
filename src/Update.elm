@@ -3,6 +3,7 @@ import Model exposing (Model, Msg(..))
 import Connection
 import Material
 import Message.Edit as Edit
+import Message.Edit.Model as EditModel
 import Platform.Cmd
 import Delegate exposing (delegate)
 
@@ -20,7 +21,7 @@ update msg model =
     SendRequest message ->
       let
         (cm, cc) = Connection.send Conn model.connection message
-        (em, ec) = Edit.update Edit.NextId model.edit
+        (em, ec) = Edit.update EditModel.NextId model.edit
       in
         ({ model | connection = cm, edit = em }, Cmd.batch [cc, ec])
     Edit msg_ ->
