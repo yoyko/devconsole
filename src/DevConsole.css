@@ -10,16 +10,27 @@
 /* Fixup texfield error messages expanding bottom and creating scrollbars */
 .mdl-textfield__error { margin-top: 0; }
 
+.sendWithId { display: flex; flex-direction: row; align-items: stretch; }
 .idSelect { display: flex; flex-direction: column; padding: 0 0.5em; text-align: center; }
 .idSelect .autonone { display: flex; flex-direction: row; justify-content: space-around; }
+.send { display: flex; flex-direction: column; }
+.send button { flex-grow: 1; }
+.send .idpreview { text-align: center; cursor: pointer; position: relative; }
+.send .idpreview::before {
+  content: '<<';
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.send .idpreview.expanded::before { content: '>>'; }
 
-.rawEdit { display: flex; flex-direction: row; align-items: flex-end; }
+.idSelect, .send .idpreview { background-color: #e3f2fd; }
+
+.rawEdit { display: flex; flex-direction: row; align-items: stretch; }
 .rawEdit .message { flex-grow: 1; }
-.rawEdit button { align-self: stretch ; height: auto; }
 
-.observeEdit { display: flex; flex-direction: row; align-items: flex-end; }
+.observeEdit { display: flex; flex-direction: row; align-items: stretch; }
 .observeEdit .url { flex-grow: 1; }
-.observeEdit button { align-self: stretch ; height: auto; }
 
 button > i { margin-left: 0.3em; }
 .mdl-tabs__tab > i { margin-right: 0.3em; }

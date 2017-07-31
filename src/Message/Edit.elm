@@ -1,7 +1,7 @@
 module Message.Edit exposing (Model, Msg(..), model, context, update, view)
 import Html exposing (Html, div, text, input)
-import Html.Attributes exposing (class, type_, placeholder, value)
-import Html.Events exposing (onInput)
+import Html.Attributes exposing (class, classList, type_, placeholder, value)
+import Html.Events exposing (onInput, onClick)
 import Material
 import Material.Icon as Icon
 import Material.Options as Options
@@ -22,6 +22,7 @@ type alias Model =
   , id : Id
   , nextAutoId : Int
   , customId : String
+  , expandedId : Bool
   , rawMessage : String
   , url : String
   }
@@ -32,6 +33,7 @@ model =
   , id = AutoInc
   , nextAutoId = 0
   , customId = ""
+  , expandedId = False
   , rawMessage = """{"method":"ping"}"""
   , url = "/stable/av/volume"
   }
@@ -41,6 +43,7 @@ type Msg
   | Id Id
   | NextId
   | CustomId String
+  | ToggleExpandedId
   | RawMessage String
   | Url String
 
@@ -69,6 +72,7 @@ update msg model =
         Id id             -> { model | id = id }
         NextId            -> { model | nextAutoId = model.nextAutoId + 1 }
         CustomId id       -> { model | customId= id }
+        ToggleExpandedId  -> { model | expandedId = not model.expandedId }
         RawMessage m      -> { model | rawMessage = m }
         Url url           -> { model | url = url }
   in
@@ -129,8 +133,7 @@ rawEdit ctx model =
             |> Options.when (not <| validJsonString model.rawMessage)
         ]
         []
-    , idSelect ctx model
-    , sendButton ctx model
+    , sendWithId ctx model
     ]
 
 rawResult : Model -> Result String Json.Encode.Value
@@ -150,8 +153,7 @@ observeEdit ctx model =
         , Options.onInput (ctx.msgLift << Url)
         ]
         []
-    , idSelect ctx model
-    , sendButton ctx model
+    , sendWithId ctx model
     ]
 
 observeResult : Model -> Result String Json.Encode.Value
@@ -161,23 +163,44 @@ observeResult model =
     , ("url", Json.Encode.string model.url)
     ]
 
+sendWithId : Context msg -> Model -> Html msg
+sendWithId ctx model =
+  div
+    [ class "sendWithId" ]
+    <| List.filterMap identity
+        [ if model.expandedId
+            then Just <| idSelect ctx model
+            else Nothing
+        , Just <| sendButton ctx model
+        ]
 
 sendButton : Context msg -> Model -> Html msg
 sendButton ctx model =
-  Button.render ctx.mdlLift [2, 0] ctx.mdl
-    [ Button.raised
-    , Button.ripple
-    , Options.onClick (ctx.sendRequest <| messageToSend model)
-    ]
-    [ text "Send", Icon.i "send" ]
+    div
+      [ class "send" ]
+      [ div
+          [ classList
+              [ ("idpreview", True)
+              , ("expanded", model.expandedId)
+              ]
+          , onClick (ctx.msgLift ToggleExpandedId)
+          ]
+          [ text <| "Id: " ++ (id model |> Maybe.withDefault "-")
+          ]
+      , Button.render ctx.mdlLift [2, 0] ctx.mdl
+          [ Button.raised
+          , Button.ripple
+          , Options.onClick (ctx.sendRequest <| messageToSend model)
+          ]
+          [ text "Send", Icon.i "send" ]
+      ]
 
 idSelect : Context msg -> Model -> Html msg
 idSelect ctx model =
   div
     [ class "idSelect"
     ]
-    [ text <| "Id: " ++ (id model |> Maybe.withDefault "-")
-    , div
+    [ div
         [ class "autonone"]
         [ Toggles.radio ctx.mdlLift [2, 0, 1] ctx.mdl
             [ Toggles.group "idSelect"
