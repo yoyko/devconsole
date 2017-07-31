@@ -2,6 +2,7 @@ module Message.Edit exposing (update, view)
 import Message.Edit.Model exposing (Model, Msg(..), Id(..), Context, model, context)
 import Message.Edit.Raw exposing (rawEdit, rawResult)
 import Message.Edit.ObserveItem exposing (observeItemEdit, observeItemResult)
+import Message.Edit.Browse exposing (browseEdit, browseResult)
 import Html exposing (Html, div, text, input)
 import Html.Attributes exposing (class, classList, type_, placeholder, value)
 import Html.Events exposing (onInput, onClick)
@@ -25,6 +26,8 @@ update msg model =
         ToggleExpandedId  -> { model | expandedId = not model.expandedId }
         RawMessage m      -> { model | rawMessage = m }
         Url url           -> { model | url = url }
+        BrowseFrom browseFrom   -> { model | browseFrom = browseFrom }
+        BrowseCount browseCount -> { model | browseCount = browseCount }
   in
     ( m, Cmd.none )
 
@@ -47,10 +50,11 @@ view ctx model =
 
 type EditTab
   = ObserveItem
+  | Browse
   | Raw
 
 showTabs : List EditTab
-showTabs = [ ObserveItem, Raw ]
+showTabs = [ ObserveItem, Browse, Raw ]
 
 tabAtIndex : Int -> EditTab
 tabAtIndex i =
@@ -67,18 +71,21 @@ tabLabelText : EditTab -> List (Html msg)
 tabLabelText tab =
   case tab of
     ObserveItem -> [ Icon.i "info_outline", text "observeItem" ]
+    Browse      -> [ Icon.i "folder", text "browse" ]
     Raw         -> [ Icon.i "code", text "Raw" ]
 
 tabContent tab =
   case tab of
     ObserveItem -> observeItemEdit
+    Browse      -> browseEdit
     Raw         -> rawEdit
 
 tabEditResult : EditTab -> Model -> Result String Json.Encode.Value
 tabEditResult tab=
   case tab of
     ObserveItem -> observeItemResult
-    Raw -> rawResult
+    Browse      -> browseResult
+    Raw         -> rawResult
 
 sendWithId : Context msg -> Model -> Html msg
 sendWithId ctx model =

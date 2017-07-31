@@ -14,6 +14,8 @@ type alias Model =
   , expandedId : Bool
   , rawMessage : String
   , url : String
+  , browseFrom : String
+  , browseCount : String
   }
 
 model : Model
@@ -25,6 +27,8 @@ model =
   , expandedId = False
   , rawMessage = """{"method":"ping"}"""
   , url = "/stable/av/volume"
+  , browseFrom = ""
+  , browseCount = ""
   }
 
 type Msg
@@ -35,6 +39,8 @@ type Msg
   | ToggleExpandedId
   | RawMessage String
   | Url String
+  | BrowseFrom String
+  | BrowseCount String
 
 type alias Context  msg =
   { msgLift : Msg -> msg
