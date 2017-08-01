@@ -2,7 +2,7 @@ module View exposing (view)
 import Model exposing (Model, Msg(..))
 import Connection exposing (Message(..))
 import Html exposing (Html, div, h1, text, input, button)
-import Html.Attributes exposing (defaultValue, class, style)
+import Html.Attributes exposing (defaultValue, id, class, style)
 import Html.Events exposing (onInput, onClick)
 import Material.Layout as Layout
 import Time
@@ -46,7 +46,7 @@ editContext model =
 
 messages : List Message -> Html Msg
 messages msgs =
-  div [ class "messages" ]
+  div [ id "messages", class "messages" ]
     ( List.map message msgs
     )
 

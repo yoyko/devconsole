@@ -31,5 +31,6 @@ type Msg
   | Mdl (Material.Msg Msg)
   | SendRequest String
   | Edit Edit.Msg
+  | NoOp
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
