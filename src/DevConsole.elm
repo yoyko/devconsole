@@ -5,6 +5,7 @@ import Connection
 import Update
 import View
 import Material
+import Material.Select as Select
 
 main : Program Never Model Msg
 main =
@@ -20,6 +21,7 @@ subscriptions model =
   Sub.batch
     [ Connection.subscriptions Conn model.connection
     , Material.subscriptions Mdl model
+    , Select.subs Mdl model.mdl
     ]
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

@@ -1,10 +1,12 @@
 module Message.Edit.Browse exposing (browseEdit, browseResult)
-import Message.Edit.Model exposing (Model, Msg(..), Context)
-import Html exposing (Html, div)
+import Message.Edit.Model exposing (Model, Msg(..), Context, BrowseType(..))
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Message.Edit.Parts as Parts exposing (textfield)
 import Material.Options as Options
 import Material.Textfield as Textfield
+import Material.Select as Select
+import Material.Dropdown.Item as Item
 import Json.Encode
 import Result.Extra
 
@@ -24,6 +26,20 @@ browseEdit ctx send model =
           [ validateInt model.browseFrom ]
       , textfield ctx [2, 3, 2] "count" model.browseCount BrowseCount
           [ validateInt model.browseCount ]
+      , Select.render ctx.mdlLift [2, 3, 3] ctx.mdl
+          [ Options.cs "type"
+          , Select.label "type"
+          , Select.floatingLabel
+          , Select.over
+          , Select.value <| browseTypeCaption model.browseType
+          ]
+          ( showBrowseTypes
+            |> List.map (\bt ->
+                Select.item
+                  [ Item.onSelect (ctx.msgLift <| BrowseType bt) ]
+                  [ text <| browseTypeCaption bt ]
+              )
+          )
       , send ctx model
       ]
 
@@ -38,12 +54,25 @@ browseResult model =
             (\(k, mv) -> Maybe.map ((,) k) mv)
             [ ("from", model.browseFrom |> maybeJsonInt)
             , ("count", model.browseCount |> maybeJsonInt)
+            , ("type", model.browseType |> browseTypeValue |> Maybe.map Json.Encode.string)
             ]
         )
       , ("url", Json.Encode.string model.url)
       , ("method", Json.Encode.string "browse")
       ]
 
+showBrowseTypes = [ Normal, Incremental, Menu ]
 
+browseTypeCaption t =
+  case t of
+    Normal ->      "Normal"
+    Incremental -> "Incremental"
+    Menu ->        "Menu"
+
+browseTypeValue t =
+  case t of
+    Normal ->      Nothing
+    Incremental -> Just "incremental"
+    Menu ->        Just "menu"
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

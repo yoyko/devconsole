@@ -1,10 +1,20 @@
-module Message.Edit.Model exposing (Model, Msg(..), Id(..), Context, model, context)
+module Message.Edit.Model exposing (Model, Msg(..), Id(..), Context, BrowseType(..), model, context)
 import Material
 
 type Id
   = AutoInc
   | None
   | Custom
+
+type BrowseType
+  = Normal
+  | Menu
+  | Incremental
+
+type UpdateValueOperation
+  = Set
+  | Adjust
+  | Toggle
 
 type alias Model =
   { activeTab : Int
@@ -16,6 +26,7 @@ type alias Model =
   , url : String
   , browseFrom : String
   , browseCount : String
+  , browseType : BrowseType
   }
 
 model : Model
@@ -29,6 +40,7 @@ model =
   , url = "/stable/av/volume"
   , browseFrom = ""
   , browseCount = ""
+  , browseType = Normal
   }
 
 type Msg
@@ -41,6 +53,7 @@ type Msg
   | Url String
   | BrowseFrom String
   | BrowseCount String
+  | BrowseType BrowseType
 
 type alias Context  msg =
   { msgLift : Msg -> msg

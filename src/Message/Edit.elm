@@ -28,6 +28,7 @@ update msg model =
         Url url           -> { model | url = url }
         BrowseFrom browseFrom   -> { model | browseFrom = browseFrom }
         BrowseCount browseCount -> { model | browseCount = browseCount }
+        BrowseType browseType   -> { model | browseType = browseType }
   in
     ( m, Cmd.none )
 

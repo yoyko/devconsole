@@ -1,6 +1,6 @@
 ELM_MAIN = src/DevConsole.elm
 ELM_SOURCES = $(shell find src/ -type f -name '*.elm')
-STATIC_FILES = index.html DevConsole.css
+STATIC_FILES = index.html DevConsole.css select.css
 
 SRC_DIR = src
 OUT_DIR = build
