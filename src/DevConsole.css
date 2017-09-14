@@ -41,6 +41,8 @@
 button > i { margin-left: 0.3em; }
 .mdl-tabs__tab > i { margin-right: 0.3em; }
 
+.mdl-tabs__tab { cursor: default }
+
 /* MDL Select position fixup (show above the select) */
 .messageEdit .mdl-menu__container, .messageEdit .mdl-menu--over {
   bottom: 0 !important;
