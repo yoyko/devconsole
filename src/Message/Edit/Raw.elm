@@ -14,8 +14,7 @@ rawEdit ctx send model =
     [ class "rawEdit" ]
     [ textfield ctx [2, 1] "Message" model.rawMessage RawMessage
         [ Textfield.autofocus
-        , Textfield.error "Invalid JSON"
-            |> Options.when (not <| validJsonString model.rawMessage)
+        , Parts.validateJson model.rawMessage
         ]
     , send ctx model
     ]
@@ -23,12 +22,5 @@ rawEdit ctx send model =
 rawResult : Model -> Result String Json.Encode.Value
 rawResult =
   .rawMessage >> Json.Decode.decodeString Json.Decode.value
-
-{- We really check for a valid json object, not just any json value. -}
-validJsonString : String -> Bool
-validJsonString str =
-  Json.Decode.decodeString (Json.Decode.keyValuePairs Json.Decode.value) str
-  |> Result.map (always True)
-  |> Result.withDefault False
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
