@@ -1,5 +1,5 @@
 module Message.Edit.Raw exposing (rawEdit, rawResult)
-import Message.Edit.Model exposing (Model, Msg(..), Context)
+import Message.Edit.Model exposing (Model, Msg(..), Ctx)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Message.Edit.Parts as Parts exposing (textfield)
@@ -8,7 +8,7 @@ import Material.Textfield as Textfield
 import Json.Encode
 import Json.Decode
 
-rawEdit : Context msg -> (Context msg -> Model -> Html msg) -> Model -> Html msg
+rawEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
 rawEdit ctx send model =
   div
     [ class "rawEdit" ]

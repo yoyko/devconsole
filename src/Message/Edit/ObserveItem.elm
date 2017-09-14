@@ -1,11 +1,11 @@
 module Message.Edit.ObserveItem exposing (observeItemEdit, observeItemResult)
-import Message.Edit.Model exposing (Model, Msg(..), Context)
+import Message.Edit.Model exposing (Model, Msg(..), Ctx)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Message.Edit.Parts as Parts
 import Json.Encode
 
-observeItemEdit : Context msg -> (Context msg -> Model -> Html msg) -> Model -> Html msg
+observeItemEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
 observeItemEdit ctx send model =
   div
     [ class "observeEdit" ]

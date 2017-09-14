@@ -1,4 +1,4 @@
-module Message.Edit.Model exposing (Model, Msg(..), Id(..), Context, BrowseType(..), model, context)
+module Message.Edit.Model exposing (Model, Msg(..), Id(..), Ctx, BrowseType(..), model, context)
 import Material
 
 type Id
@@ -55,7 +55,7 @@ type Msg
   | BrowseCount String
   | BrowseType BrowseType
 
-type alias Context  msg =
+type alias Ctx  msg =
   { msgLift : Msg -> msg
   , sendRequest : String -> msg
   , mdlLift : Material.Msg msg -> msg
@@ -67,7 +67,7 @@ context
     -> (String -> msg)
     -> (Material.Msg msg -> msg)
     -> Material.Model
-    -> Context msg
+    -> Ctx msg
 context msgLift sendRequest mdlLift mdl =
   { msgLift = msgLift, sendRequest = sendRequest, mdlLift =  mdlLift, mdl = mdl }
 

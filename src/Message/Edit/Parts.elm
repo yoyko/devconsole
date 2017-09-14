@@ -1,5 +1,5 @@
 module Message.Edit.Parts exposing (textfield, url, validateJson)
-import Message.Edit.Model exposing (Model, Msg(..), Context)
+import Message.Edit.Model exposing (Model, Msg(..), Ctx)
 import Html exposing (Html)
 import Material.Options as Options
 import Material.Textfield as Textfield
@@ -7,7 +7,7 @@ import Char
 import Json.Encode
 import Json.Decode
 
-textfield : Context msg
+textfield : Ctx msg
   -> List Int
   -> String
   -> String
@@ -24,7 +24,7 @@ textfield ctx index label value msg options =
     ] ++ options)
     []
 
-url : Context msg -> List Int -> Model -> Html.Html msg
+url : Ctx msg -> List Int -> Model -> Html.Html msg
 url ctx index model =
   textfield ctx index "Url" model.url Url
     [ Textfield.autofocus

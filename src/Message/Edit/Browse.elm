@@ -1,5 +1,5 @@
 module Message.Edit.Browse exposing (browseEdit, browseResult)
-import Message.Edit.Model exposing (Model, Msg(..), Context, BrowseType(..))
+import Message.Edit.Model exposing (Model, Msg(..), Ctx, BrowseType(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Message.Edit.Parts as Parts exposing (textfield)
@@ -10,7 +10,7 @@ import Material.Dropdown.Item as Item
 import Json.Encode
 import Result.Extra
 
-browseEdit : Context msg -> (Context msg -> Model -> Html msg) -> Model -> Html msg
+browseEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
 browseEdit ctx send model =
   let
     isValidInt str =

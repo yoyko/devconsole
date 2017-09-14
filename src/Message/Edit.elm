@@ -1,5 +1,5 @@
 module Message.Edit exposing (update, view)
-import Message.Edit.Model exposing (Model, Msg(..), Id(..), Context, model, context)
+import Message.Edit.Model exposing (Model, Msg(..), Id(..), Ctx, model, context)
 import Message.Edit.Raw exposing (rawEdit, rawResult)
 import Message.Edit.ObserveItem exposing (observeItemEdit, observeItemResult)
 import Message.Edit.Browse exposing (browseEdit, browseResult)
@@ -32,7 +32,7 @@ update msg model =
   in
     ( m, Cmd.none )
 
-view : Context msg -> Model -> Html msg
+view : Ctx msg -> Model -> Html msg
 view ctx model =
   let
     tabLabel t =
@@ -88,7 +88,7 @@ tabEditResult tab=
     Browse      -> browseResult
     Raw         -> rawResult
 
-sendWithId : Context msg -> Model -> Html msg
+sendWithId : Ctx msg -> Model -> Html msg
 sendWithId ctx model =
   div
     [ class "sendWithId" ]
@@ -99,7 +99,7 @@ sendWithId ctx model =
         , Just <| sendButton ctx model
         ]
 
-sendButton : Context msg -> Model -> Html msg
+sendButton : Ctx msg -> Model -> Html msg
 sendButton ctx model =
     div
       [ class "send" ]
@@ -120,7 +120,7 @@ sendButton ctx model =
           [ text "Send", Icon.i "send" ]
       ]
 
-idSelect : Context msg -> Model -> Html msg
+idSelect : Ctx msg -> Model -> Html msg
 idSelect ctx model =
   div
     [ class "idSelect"
