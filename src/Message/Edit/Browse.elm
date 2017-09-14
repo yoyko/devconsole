@@ -26,20 +26,7 @@ browseEdit ctx send model =
           [ validateInt model.browseFrom ]
       , textfield ctx [2, 3, 2] "count" model.browseCount BrowseCount
           [ validateInt model.browseCount ]
-      , Select.render ctx.mdlLift [2, 3, 3] ctx.mdl
-          [ Options.cs "type"
-          , Select.label "type"
-          , Select.floatingLabel
-          , Select.over
-          , Select.value <| browseTypeCaption model.browseType
-          ]
-          ( showBrowseTypes
-            |> List.map (\bt ->
-                Select.item
-                  [ Item.onSelect (ctx.msgLift <| BrowseType bt) ]
-                  [ text <| browseTypeCaption bt ]
-              )
-          )
+      , typeSelect ctx [2, 3, 3] model
       , send ctx model
       ]
 
@@ -60,6 +47,22 @@ browseResult model =
       , ("url", Json.Encode.string model.url)
       , ("method", Json.Encode.string "browse")
       ]
+
+typeSelect ctx index model =
+  Select.render ctx.mdlLift [2, 3, 3] ctx.mdl
+    [ Options.cs "type"
+    , Select.label "type"
+    , Select.floatingLabel
+    , Select.over
+    , Select.value <| browseTypeCaption model.browseType
+    ]
+    ( showBrowseTypes
+      |> List.map (\bt ->
+          Select.item
+            [ Item.onSelect (ctx.msgLift <| BrowseType bt) ]
+            [ text <| browseTypeCaption bt ]
+        )
+    )
 
 showBrowseTypes = [ Normal, Incremental, Menu ]
 
