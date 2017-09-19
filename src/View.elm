@@ -11,6 +11,7 @@ import Date.Extra.Format
 import Date.Extra.Config.Configs
 import Message.Edit
 import Message.Edit.Model
+import Connection.Edit
 
 view : Model -> Html Msg
 view model =
@@ -29,7 +30,7 @@ header model =
     []
     [ Layout.title [] [ text "DevConsole" ]
     , Layout.spacer
-    , text model.connection.url
+    , Connection.Edit.view Conn Mdl model.mdl model.connection.url
     ]
   ]
 

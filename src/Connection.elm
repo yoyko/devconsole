@@ -31,6 +31,7 @@ type Msg
   | WsOpened String
   | Timestamp Msg
   | Timestamped Msg Time.Time
+  | Url String
 
 url : Model -> String
 url model =
@@ -56,6 +57,7 @@ update lift msg model =
       WsClosed ws   -> onlyAddMessage <| Closed   model.lastTs ws
       Timestamp msg_ -> (model, Task.perform (lift << Timestamped msg_) Time.now)
       Timestamped msg_ ts -> update lift msg_ { model  | lastTs = ts }
+      Url url -> ( { model | url = url }, Cmd.none )
 
 subscriptions : (Msg -> m) -> Model -> Sub m
 subscriptions lift model =
