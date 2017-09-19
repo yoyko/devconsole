@@ -13,7 +13,7 @@ type alias Model =
 model : String -> Model
 model id =
   { id = id
-  , url = "ws://nuvo.local:8000/apiWs" ++ "?" ++ id
+  , url = "ws://nuvo.local:8000/apiWs"
   , messages = []
   , lastTs = 0
   }
@@ -32,6 +32,10 @@ type Msg
   | Timestamp Msg
   | Timestamped Msg Time.Time
 
+url : Model -> String
+url model =
+  model.url ++ "?" ++ model.id
+
 send : (Msg -> m) -> Model -> String -> (Model, Cmd m)
 send lift model msg =
   (model, Task.perform (lift << Timestamped (Send msg)) Time.now)
@@ -45,7 +49,7 @@ update lift msg model =
     case msg of
       Send msg_ ->
         ( addMessage <| Sent model.lastTs msg_
-        , WebSocket.send model.url msg_
+        , WebSocket.send (url model) msg_
         )
       Response msg_ -> onlyAddMessage <| Received model.lastTs msg_
       WsOpened ws   -> onlyAddMessage <| Opened   model.lastTs ws
@@ -56,7 +60,7 @@ update lift msg model =
 subscriptions : (Msg -> m) -> Model -> Sub m
 subscriptions lift model =
   Sub.batch
-    [ WebSocket.listen model.url  (lift << Timestamp << Response)
+    [ WebSocket.listen (url model) (lift << Timestamp << Response)
     , WebSocket.onOpen  (lift << Timestamp << WsOpened)
     , WebSocket.onClose (lift << Timestamp << WsClosed)
     ]
