@@ -4,19 +4,30 @@ import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Message.Edit.Parts as Parts
 import Json.Encode
+import Json.Decode
 
 observeItemEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
 observeItemEdit ctx send model =
   div
     [ class "observeEdit" ]
-    [ Parts.url ctx [2, 2] model
+    [ Parts.twoLine
+        [ Parts.url ctx [2, 2, 1] model ]
+        [ Parts.context ctx [2, 2, 2] model ]
     , send ctx model
     ]
 
 observeItemResult : Model -> Result String Json.Encode.Value
 observeItemResult model =
   Ok <| Json.Encode.object
-    [ ("url", Json.Encode.string model.url)
+    [ ("params", Json.Encode.object
+        <| List.filterMap
+          (\(k, mv) -> Maybe.map ((,) k) mv)
+          [ ("context"
+            , model.context |> Json.Decode.decodeString Json.Decode.value |> Result.toMaybe
+            )
+          ]
+      )
+    , ("url", Json.Encode.string model.url)
     , ("method", Json.Encode.string "observeItem")
     ]
 

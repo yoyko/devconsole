@@ -26,6 +26,7 @@ update msg model =
         ToggleExpandedId  -> { model | expandedId = not model.expandedId }
         RawMessage m      -> { model | rawMessage = m }
         Url url           -> { model | url = url }
+        Context context   -> { model | context = context }
         BrowseFrom browseFrom   -> { model | browseFrom = browseFrom }
         BrowseCount browseCount -> { model | browseCount = browseCount }
         BrowseType browseType   -> { model | browseType = browseType }

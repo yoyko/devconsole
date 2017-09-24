@@ -26,11 +26,23 @@
 
 .idSelect, .send .idpreview { background-color: #e3f2fd; }
 
+/* make all tabs the same height */
+.mdl-tab__panel.is-active > div > div { min-height: 9.6em; }
+
+.editContent { display: flex; flex-direction: column; align-items: stretch; flex-grow: 1;}
+.editContent > * { display: flex; flex-direction: row; align-items: stretch; }
+
+.editContent .url { flex-grow: 1; }
+.editContent .context { flex-grow: 1; }
+
 .rawEdit { display: flex; flex-direction: row; align-items: stretch; }
 .rawEdit .message { flex-grow: 1; }
+.rawEdit > .mdl-textfield { display: flex; flex-direction: column; }
+.rawEdit > .mdl-textfield > textarea { flex-grow: 1; }
 
 .observeEdit { display: flex; flex-direction: row; align-items: stretch; }
 .observeEdit .url { flex-grow: 1; }
+.observeEdit .context { flex-grow: 1; }
 
 .browseEdit { display: flex; flex-direction: row; align-items: stretch; }
 .browseEdit .url { flex-grow: 1; }

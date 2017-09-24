@@ -24,6 +24,7 @@ type alias Model =
   , expandedId : Bool
   , rawMessage : String
   , url : String
+  , context : String
   , browseFrom : String
   , browseCount : String
   , browseType : BrowseType
@@ -38,6 +39,7 @@ model =
   , expandedId = False
   , rawMessage = """{"method":"ping"}"""
   , url = "/stable/av/volume"
+  , context = ""
   , browseFrom = ""
   , browseCount = ""
   , browseType = Normal
@@ -51,6 +53,7 @@ type Msg
   | ToggleExpandedId
   | RawMessage String
   | Url String
+  | Context String
   | BrowseFrom String
   | BrowseCount String
   | BrowseType BrowseType
