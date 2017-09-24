@@ -14,6 +14,7 @@ rawEdit ctx send model =
     [ class "rawEdit" ]
     [ textfield ctx [2, 1] "Message" model.rawMessage RawMessage
         [ Textfield.autofocus
+        , Textfield.textarea
         , Parts.validateJson model.rawMessage
         ]
     , send ctx model
