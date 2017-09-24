@@ -44,6 +44,10 @@
 .observeEdit .url { flex-grow: 1; }
 .observeEdit .context { flex-grow: 1; }
 
+.invokeEdit { display: flex; flex-direction: row; align-items: stretch; }
+.invokeEdit .url { flex-grow: 1; }
+.invokeEdit .context { flex-grow: 1; }
+
 .browseEdit { display: flex; flex-direction: row; align-items: stretch; }
 .browseEdit .url { flex-grow: 1; }
 .browseEdit .from { width: 4em; }
