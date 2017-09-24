@@ -5,7 +5,7 @@ import Html.Attributes exposing (class)
 import Message.Edit.Parts as Parts
 import Json.Encode
 import Json.Decode
-import Json.Encode.Maybe exposing (maybeObject)
+import Json.Encode.Maybe exposing (maybeObject,maybeStringValue)
 
 observeItemEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
 observeItemEdit ctx send model =
@@ -22,9 +22,7 @@ observeItemResult model =
   Result.fromMaybe "Bad arguments"
     <| maybeObject
       [ ("params", maybeObject
-            [ ("context"
-              , model.context |> Json.Decode.decodeString Json.Decode.value |> Result.toMaybe
-              )
+            [ ("context", maybeStringValue model.context)
             ]
         )
       , ("url", Just <| Json.Encode.string model.url)

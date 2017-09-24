@@ -1,4 +1,4 @@
-module Json.Encode.Maybe exposing (maybeObject)
+module Json.Encode.Maybe exposing (maybeObject, maybeStringValue)
 import Json.Encode
 import Json.Decode
 
@@ -12,5 +12,9 @@ maybeObject maybeItems =
     case items of
       [] -> Nothing
       _ -> Just <| Json.Encode.object items
+
+maybeStringValue : String -> Maybe Json.Encode.Value
+maybeStringValue =
+  Json.Decode.decodeString Json.Decode.value >> Result.toMaybe
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

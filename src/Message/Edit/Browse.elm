@@ -9,7 +9,7 @@ import Material.Select as Select
 import Material.Dropdown.Item as Item
 import Json.Encode
 import Json.Decode
-import Json.Encode.Maybe exposing (maybeObject)
+import Json.Encode.Maybe exposing (maybeObject, maybeStringValue)
 import Result.Extra
 
 browseEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
@@ -46,9 +46,7 @@ browseResult model =
             [ ("from", model.browseFrom |> maybeJsonInt)
             , ("count", model.browseCount |> maybeJsonInt)
             , ("type", model.browseType |> browseTypeValue |> Maybe.map Json.Encode.string)
-            , ("context"
-              , model.context |> Json.Decode.decodeString Json.Decode.value |> Result.toMaybe
-              )
+            , ("context", maybeStringValue model.context)
             ]
           )
         , ("url", Just <| Json.Encode.string model.url)
