@@ -5,6 +5,7 @@ import Html.Attributes exposing (class)
 import Message.Edit.Parts as Parts
 import Json.Encode
 import Json.Decode
+import Json.Encode.Maybe exposing (maybeObject)
 
 observeItemEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
 observeItemEdit ctx send model =
@@ -18,17 +19,16 @@ observeItemEdit ctx send model =
 
 observeItemResult : Model -> Result String Json.Encode.Value
 observeItemResult model =
-  Ok <| Json.Encode.object
-    [ ("params", Json.Encode.object
-        <| List.filterMap
-          (\(k, mv) -> Maybe.map ((,) k) mv)
-          [ ("context"
-            , model.context |> Json.Decode.decodeString Json.Decode.value |> Result.toMaybe
-            )
-          ]
-      )
-    , ("url", Json.Encode.string model.url)
-    , ("method", Json.Encode.string "observeItem")
-    ]
+  Result.fromMaybe "Bad arguments"
+    <| maybeObject
+      [ ("params", maybeObject
+            [ ("context"
+              , model.context |> Json.Decode.decodeString Json.Decode.value |> Result.toMaybe
+              )
+            ]
+        )
+      , ("url", Just <| Json.Encode.string model.url)
+      , ("method", Just <| Json.Encode.string "observeItem")
+      ]
 
 {- vim: set sw=2 ts=2 sts=2 et : -}

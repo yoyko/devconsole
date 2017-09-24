@@ -9,6 +9,7 @@ import Material.Select as Select
 import Material.Dropdown.Item as Item
 import Json.Encode
 import Json.Decode
+import Json.Encode.Maybe exposing (maybeObject)
 import Result.Extra
 
 browseEdit : Ctx msg -> (Ctx msg -> Model -> Html msg) -> Model -> Html msg
@@ -39,10 +40,9 @@ browseResult model =
   let
     maybeJsonInt = String.toInt >> Result.toMaybe >> Maybe.map Json.Encode.int
   in
-    Ok <| Json.Encode.object
-      [ ("params", Json.Encode.object
-          <| List.filterMap
-            (\(k, mv) -> Maybe.map ((,) k) mv)
+    Result.fromMaybe "Bad arguments"
+      <| maybeObject
+        [ ("params", maybeObject
             [ ("from", model.browseFrom |> maybeJsonInt)
             , ("count", model.browseCount |> maybeJsonInt)
             , ("type", model.browseType |> browseTypeValue |> Maybe.map Json.Encode.string)
@@ -50,10 +50,10 @@ browseResult model =
               , model.context |> Json.Decode.decodeString Json.Decode.value |> Result.toMaybe
               )
             ]
-        )
-      , ("url", Json.Encode.string model.url)
-      , ("method", Json.Encode.string "browse")
-      ]
+          )
+        , ("url", Just <| Json.Encode.string model.url)
+        , ("method", Just <| Json.Encode.string "browse")
+        ]
 
 typeSelect ctx index model =
   Select.render ctx.mdlLift [2, 3, 3] ctx.mdl
