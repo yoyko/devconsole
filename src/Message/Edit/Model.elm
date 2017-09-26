@@ -1,4 +1,13 @@
-module Message.Edit.Model exposing (Model, Msg(..), Id(..), Ctx, BrowseType(..), model, context)
+module Message.Edit.Model exposing
+  ( Model
+  , Msg(..)
+  , Id(..)
+  , Ctx
+  , BrowseType(..)
+  , UpdateValueOperation(..)
+  , model
+  , context
+  )
 import Material
 
 type Id
@@ -28,6 +37,9 @@ type alias Model =
   , browseFrom : String
   , browseCount : String
   , browseType : BrowseType
+  , updateValueOperation : UpdateValueOperation
+  , updateValueValue : String
+  , updateValueSteps : String
   }
 
 model : Model
@@ -43,6 +55,9 @@ model =
   , browseFrom = ""
   , browseCount = ""
   , browseType = Normal
+  , updateValueOperation = Set
+  , updateValueValue = ""
+  , updateValueSteps = ""
   }
 
 type Msg
@@ -57,6 +72,9 @@ type Msg
   | BrowseFrom String
   | BrowseCount String
   | BrowseType BrowseType
+  | UpdateValueOperation UpdateValueOperation
+  | UpdateValueValue String
+  | UpdateValueSteps String
 
 type alias Ctx  msg =
   { msgLift : Msg -> msg

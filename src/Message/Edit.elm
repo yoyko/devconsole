@@ -4,6 +4,7 @@ import Message.Edit.Raw exposing (rawEdit, rawResult)
 import Message.Edit.ObserveItem exposing (observeItemEdit, observeItemResult)
 import Message.Edit.Browse exposing (browseEdit, browseResult)
 import Message.Edit.Invoke exposing (invokeEdit, invokeResult)
+import Message.Edit.UpdateValue exposing (updateValueEdit, updateValueResult)
 import Html exposing (Html, div, text, input)
 import Html.Attributes exposing (class, classList, type_, placeholder, value)
 import Html.Events exposing (onInput, onClick)
@@ -31,6 +32,9 @@ update msg model =
         BrowseFrom browseFrom   -> { model | browseFrom = browseFrom }
         BrowseCount browseCount -> { model | browseCount = browseCount }
         BrowseType browseType   -> { model | browseType = browseType }
+        UpdateValueOperation operation -> { model | updateValueOperation = operation }
+        UpdateValueValue value         -> { model | updateValueValue = value }
+        UpdateValueSteps steps         -> { model | updateValueSteps = steps }
   in
     ( m, Cmd.none )
 
@@ -55,10 +59,11 @@ type EditTab
   = ObserveItem
   | Browse
   | Invoke
+  | UpdateValue
   | Raw
 
 showTabs : List EditTab
-showTabs = [ ObserveItem, Browse, Invoke, Raw ]
+showTabs = [ ObserveItem, Browse, Invoke, UpdateValue, Raw ]
 
 tabAtIndex : Int -> EditTab
 tabAtIndex i =
@@ -77,6 +82,7 @@ tabLabelText tab =
     ObserveItem -> [ Icon.i "info_outline", text "observeItem" ]
     Browse      -> [ Icon.i "folder", text "browse" ]
     Invoke      -> [ Icon.i "play_arrow", text "invoke" ]
+    UpdateValue -> [ Icon.i "create", text "updateValue" ]
     Raw         -> [ Icon.i "code", text "Raw" ]
 
 tabContent tab =
@@ -84,6 +90,7 @@ tabContent tab =
     ObserveItem -> observeItemEdit
     Browse      -> browseEdit
     Invoke      -> invokeEdit
+    UpdateValue -> updateValueEdit
     Raw         -> rawEdit
 
 tabEditResult : EditTab -> Model -> Result String Json.Encode.Value
@@ -92,6 +99,7 @@ tabEditResult tab=
     ObserveItem -> observeItemResult
     Browse      -> browseResult
     Invoke      -> invokeResult
+    UpdateValue -> updateValueResult
     Raw         -> rawResult
 
 sendWithId : Ctx msg -> Model -> Html msg

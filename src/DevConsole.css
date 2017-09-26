@@ -46,7 +46,11 @@
 
 .invokeEdit { display: flex; flex-direction: row; align-items: stretch; }
 .invokeEdit .url { flex-grow: 1; }
-.invokeEdit .context { flex-grow: 1; }
+
+.updateValueEdit { display: flex; flex-direction: row; align-items: stretch; }
+.updateValueEdit .operation { width: 8em; }
+.updateValueEdit .steps { width: 4em; }
+.updateValueEdit .value { flex-grow: 0.2; }
 
 .browseEdit { display: flex; flex-direction: row; align-items: stretch; }
 .browseEdit .url { flex-grow: 1; }
