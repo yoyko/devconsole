@@ -41,11 +41,8 @@
 .rawEdit > .mdl-textfield > textarea { flex-grow: 1; }
 
 .observeEdit { display: flex; flex-direction: row; align-items: stretch; }
-.observeEdit .url { flex-grow: 1; }
-.observeEdit .context { flex-grow: 1; }
 
 .invokeEdit { display: flex; flex-direction: row; align-items: stretch; }
-.invokeEdit .url { flex-grow: 1; }
 
 .updateValueEdit { display: flex; flex-direction: row; align-items: stretch; }
 .updateValueEdit .operation { width: 8em; }
@@ -53,7 +50,6 @@
 .updateValueEdit .value { flex-grow: 0.2; }
 
 .browseEdit { display: flex; flex-direction: row; align-items: stretch; }
-.browseEdit .url { flex-grow: 1; }
 .browseEdit .from { width: 4em; }
 .browseEdit .count { width: 4em; }
 .browseEdit .type { width: 8em; }
