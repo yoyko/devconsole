@@ -1,4 +1,4 @@
-module Json.Encode.Maybe exposing (maybeObject, maybeStringValue)
+module Json.Encode.Maybe exposing (maybeObject, maybeStringValue, maybeStringInt)
 import Json.Encode
 import Json.Decode
 
@@ -16,5 +16,8 @@ maybeObject maybeItems =
 maybeStringValue : String -> Maybe Json.Encode.Value
 maybeStringValue =
   Json.Decode.decodeString Json.Decode.value >> Result.toMaybe
+
+maybeStringInt : String -> Maybe Json.Encode.Value
+maybeStringInt = String.toInt >> Result.toMaybe >> Maybe.map Json.Encode.int
 
 {- vim: set sw=2 ts=2 sts=2 et : -}
