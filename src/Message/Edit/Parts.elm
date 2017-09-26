@@ -1,4 +1,13 @@
-module Message.Edit.Parts exposing (textfield, url, context, twoLine, validateJson, validateJsonOrEmpty, validJsonOrEmptyString)
+module Message.Edit.Parts exposing
+  (textfield
+  , url
+  , context
+  , twoLine
+  , validateInt
+  , validateJson
+  , validateJsonOrEmpty
+  , validJsonOrEmptyString
+  )
 import Message.Edit.Model exposing (Model, Msg(..), Ctx)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
@@ -7,6 +16,7 @@ import Material.Textfield as Textfield
 import Char
 import Json.Encode
 import Json.Decode
+import Result.Extra
 
 textfield : Ctx msg
   -> List Int
@@ -53,6 +63,15 @@ decapitalize s =
   case String.uncons s of
     Just (c, s) -> String.cons (Char.toLower c) s
     Nothing -> s
+
+
+validateInt str =
+  let
+    isValidInt str =
+      (str |> String.toInt |> Result.Extra.isOk) || (String.isEmpty str)
+  in
+    Textfield.error "Number!"
+      |> Options.when (not <| isValidInt str)
 
 validateJson : String -> Textfield.Property msg
 validateJson =
